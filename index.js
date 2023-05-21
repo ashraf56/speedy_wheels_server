@@ -68,6 +68,18 @@ app.get('/alltoy/:id',async(req,res)=>{
 })
 
 
+
+ app.get("/atoy/:text", async (req, res) => {
+   
+  
+  const toyscategory = await toyCollection.find({
+          subCategory: req.params.text }).toArray();
+   res.send(toyscategory);
+ 
+ 
+    });
+
+
 app.delete('/alltoy/:id' ,async (req,res)=>{
   let delid= req.params.id;
   const query = { _id: new ObjectId(delid) };
