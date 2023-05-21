@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT|| 3000
-let cors=require('cors')
+let cors=require("cors")
 
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -39,6 +39,24 @@ app.get('/alltoy' , async(req,res)=>{
 
 let result= await  toyCollection.find().toArray();
 res.send(result)
+})
+
+app.put('/alltoy/:id',async(req,res)=>{
+let toybody=req.body;
+   let tid= req.params.id;
+   const filter = { _id: new ObjectId(tid)};
+     const options = { upsert: true };
+const updateDoc = {
+    $set: {
+      price: toybody.price,
+      quantity:toybody.quantity,
+      description: toybody.description
+    },
+    
+  };
+  const result = await toyCollection.updateOne(filter, updateDoc, options);
+        res.send(result)
+
 })
 app.get('/alltoy/:id',async(req,res)=>{
 
