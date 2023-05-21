@@ -67,6 +67,14 @@ app.get('/alltoy/:id',async(req,res)=>{
 
 })
 
+
+app.delete('/alltoy/:id' ,async (req,res)=>{
+  let delid= req.params.id;
+  const query = { _id: new ObjectId(delid) };
+  const result = await toyCollection.deleteOne(query);
+  res.send(result)
+  })
+
 app.get('/mytoy',async (req ,res)=>{
 
 let toyquery={}
