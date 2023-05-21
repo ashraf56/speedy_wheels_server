@@ -6,7 +6,18 @@ let cors=require("cors")
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
-app.use(cors())
+
+
+
+const corsConfig = {
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+  app.use(cors(corsConfig))
+  app.options("", cors(corsConfig))
+
+
 app.use(express.json())
 
 
@@ -15,7 +26,7 @@ app.use(express.json())
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5nj1o0g.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,7 +37,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    //await client.connect();
     let toyCollection=client.db('ToysDB').collection('Alltoy')
 
 app.post('/alltoy',async (req,res)=>{
@@ -36,8 +46,8 @@ res.send(result)
 })
 
 app.get('/alltoy' , async(req,res)=>{
-
-let result= await  toyCollection.find().toArray();
+  const limit = parseInt(req.query.limit) || 20;
+let result= await  toyCollection.find().limit(limit).toArray();
 res.send(result)
 })
 
