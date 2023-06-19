@@ -53,6 +53,7 @@ let result= await  toyCollection.find().limit(limit).toArray();
 res.send(result)
 })
 
+
 app.put('/alltoy/:id',async(req,res)=>{
 let toybody=req.body;
    let tid= req.params.id;
