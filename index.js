@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
-const port = process.env.PORT|| 3000
-let cors=require("cors")
+const port = process.env.PORT || 3000
+let cors = require("cors")
 
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -13,9 +13,9 @@ const corsConfig = {
   origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE']
-  }
-  app.use(cors(corsConfig))
-  app.options("", cors(corsConfig))
+}
+app.use(cors(corsConfig))
+app.options("", cors(corsConfig))
 
 
 app.use(express.json())
@@ -32,83 +32,84 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-    useNewUrlParser:true,
-    useUnifiedTopology:true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   }
 });
 
 async function run() {
   try {
-    let toyCollection=client.db('ToysDB').collection('Alltoy')
+    let toyCollection = client.db('ToysDB').collection('Alltoy')
 
-app.post('/alltoy',async (req,res)=>{
-let toys=req.body;
-let result= await toyCollection.insertOne(toys)
-res.send(result)
-})
+    app.post('/alltoy', async (req, res) => {
+      let toys = req.body;
+      let result = await toyCollection.insertOne(toys)
+      res.send(result)
+    })
 
-app.get('/alltoy' , async(req,res)=>{
-  const limit = parseInt(req.query.limit) || 20;
-let result= await  toyCollection.find().limit(limit).toArray();
-res.send(result)
-})
-
-
-app.put('/alltoy/:id',async(req,res)=>{
-let toybody=req.body;
-   let tid= req.params.id;
-   const filter = { _id: new ObjectId(tid)};
-     const options = { upsert: true };
-const updateDoc = {
-    $set: {
-      price: toybody.price,
-      quantity:toybody.quantity,
-      description: toybody.description
-    },
-    
-  };
-  const result = await toyCollection.updateOne(filter, updateDoc, options);
-        res.send(result)
-
-})
-app.get('/alltoy/:id',async(req,res)=>{
-
-   let toyid= req.params.id;
-    let query={_id: new ObjectId(toyid)}
-        let results= await toyCollection.findOne(query)
-        res.send(results)
-
-})
+    app.get('/alltoy', async (req, res) => {
+      const limit = parseInt(req.query.limit) || 20;
+      let result = await toyCollection.find().limit(limit).toArray();
+      res.send(result)
+    })
 
 
+    app.put('/alltoy/:id', async (req, res) => {
+      let toybody = req.body;
+      let tid = req.params.id;
+      const filter = { _id: new ObjectId(tid) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          price: toybody.price,
+          quantity: toybody.quantity,
+          description: toybody.description
+        },
 
- app.get("/atoy/:text", async (req, res) => {
-   
-  
-  const toyscategory = await toyCollection.find({
-          subCategory: req.params.text }).toArray();
-   res.send(toyscategory);
- 
- 
+      };
+      const result = await toyCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
+
+    })
+    app.get('/alltoy/:id', async (req, res) => {
+
+      let toyid = req.params.id;
+      let query = { _id: new ObjectId(toyid) }
+      let results = await toyCollection.findOne(query)
+      res.send(results)
+
+    })
+
+
+
+    app.get("/atoy/:text", async (req, res) => {
+
+
+      const toyscategory = await toyCollection.find({
+        subCategory: req.params.text
+      }).toArray();
+      res.send(toyscategory);
+
+
     });
 
 
-app.delete('/alltoy/:id' ,async (req,res)=>{
-  let delid= req.params.id;
-  const query = { _id: new ObjectId(delid) };
-  const result = await toyCollection.deleteOne(query);
-  res.send(result)
-  })
+    app.delete('/alltoy/:id', async (req, res) => {
+      let delid = req.params.id;
+      const query = { _id: new ObjectId(delid) };
+      const result = await toyCollection.deleteOne(query);
+      res.send(result)
+    })
 
-app.get('/mytoy',async (req ,res)=>{
+    app.get('/mytoy', async (req, res) => {
 
-let toyquery={}
-if (req.query?.email) {
-  toyquery={email: req.query.email}
-}
-let results= await toyCollection.find(toyquery).toArray()
-res.send(results)
-})
+      let toyquery = {}
+      if (req.query?.email) {
+        toyquery = { email: req.query.email }
+      }
+      let results = await toyCollection.find(toyquery).toArray()
+      res.send(results)
+    })
 
 
     await client.db("admin").command({ ping: 1 });
